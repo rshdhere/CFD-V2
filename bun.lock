@@ -14,6 +14,24 @@
         "typescript": "5.9.2",
       },
     },
+    "apps/engine": {
+      "name": "@CFD-V2/engine",
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
+      },
+    },
+    "apps/price-poller": {
+      "name": "@CFD-v2/price-poller",
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
+      },
+    },
     "apps/server": {
       "name": "@CFD-V2/server",
       "devDependencies": {
@@ -42,6 +60,15 @@
         "typescript": "5.9.2",
       },
     },
+    "apps/ws-server": {
+      "name": "@CFD-V2/ws-server",
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
+      },
+    },
     "packages/api": {
       "name": "@CFD-V2/api",
       "dependencies": {
@@ -68,6 +95,15 @@
     },
     "packages/drizzle": {
       "name": "drizzle",
+      "devDependencies": {
+        "@types/bun": "latest",
+      },
+      "peerDependencies": {
+        "typescript": "^5",
+      },
+    },
+    "packages/services": {
+      "name": "@CFD-V2/services",
       "devDependencies": {
         "@types/bun": "latest",
       },
@@ -137,9 +173,13 @@
 
     "@CFD-V2/config": ["@CFD-V2/config@workspace:packages/config"],
 
+    "@CFD-V2/engine": ["@CFD-V2/engine@workspace:apps/engine"],
+
     "@CFD-V2/eslint-config": ["@CFD-V2/eslint-config@workspace:tooling/eslint-config"],
 
     "@CFD-V2/server": ["@CFD-V2/server@workspace:apps/server"],
+
+    "@CFD-V2/services": ["@CFD-V2/services@workspace:packages/services"],
 
     "@CFD-V2/typescript-config": ["@CFD-V2/typescript-config@workspace:tooling/typescript-config"],
 
@@ -148,6 +188,10 @@
     "@CFD-V2/utils": ["@CFD-V2/utils@workspace:packages/utils"],
 
     "@CFD-V2/validators": ["@CFD-V2/validators@workspace:packages/validators"],
+
+    "@CFD-V2/ws-server": ["@CFD-V2/ws-server@workspace:apps/ws-server"],
+
+    "@CFD-v2/price-poller": ["@CFD-v2/price-poller@workspace:apps/price-poller"],
 
     "@emnapi/runtime": ["@emnapi/runtime@1.9.1", "", { "dependencies": { "tslib": "^2.4.0" } }, "sha512-VYi5+ZVLhpgK4hQ0TAjiQiZ6ol0oe4mBx7mVv7IflsiEp0OWoVsp/+f9Vc1hOhE0TtkORVrI1GvzyreqpgWtkA=="],
 
