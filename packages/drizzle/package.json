@@ -1,8 +1,12 @@
 {
-  "name": "drizzle",
+  "name": "@CFD-V2/drizzle",
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "exports": {
+    "./database": "./src/database/schema.ts",
+    ".": "./src/index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest",
     "@types/pg": "^8.20.0",
