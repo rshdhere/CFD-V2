@@ -3,18 +3,30 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "exports": {
+    ".": "./src/index.ts",
+    "./email": "./src/email/verification.ts"
+  },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/cookie-parser": "^1.4.10",
+    "@types/bun": "latest",
+    "@types/express": "^5.0.6",
+    "@types/cors": "^2.8.19",
+    "@types/jsonwebtoken": "^9.0.10"
   },
   "peerDependencies": {
     "typescript": "^5"
   },
   "dependencies": {
-    "@CFD-V2/validators": "workspace:*",
+    "@CFD-V2/config": "workspace:*",
     "@CFD-V2/drizzle": "workspace:*",
+    "@CFD-V2/services": "workspace:*",
+    "@CFD-V2/validators": "workspace:*",
     "@trpc/server": "^11.14.1",
-    "@types/express": "^5.0.6",
+    "cookie-parser": "^1.4.7",
+    "cors": "^2.8.6",
     "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
     "zod": "^4.3.6"
   }
 }
