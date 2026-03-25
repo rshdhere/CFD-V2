@@ -24,6 +24,12 @@ export const authSchema = {
     })
     .strict(),
 
+  signupOutput: z
+    .object({
+      message: z.string(), // "verification email sent"
+    })
+    .strict(),
+
   output: z
     .object({
       accessToken: z.jwt(),
