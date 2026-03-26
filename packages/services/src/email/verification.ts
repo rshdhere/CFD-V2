@@ -2,8 +2,8 @@ import jwt from "jsonwebtoken";
 import { TRPCError } from "@trpc/server";
 import { readFile } from "node:fs/promises";
 import {
+  createJwtSignOptions,
   EMAIL_JWT_EXPIRATION_TIME,
-  JWT_ALGORITHM,
   JWT_SECRET,
   SERVER_URL,
 } from "@CFD-V2/config";
@@ -25,18 +25,13 @@ export function createEmailVerificationToken(userId: string) {
     });
   }
 
-  const signOptions: jwt.SignOptions = {
-    algorithm: JWT_ALGORITHM,
-    expiresIn: EMAIL_JWT_EXPIRATION_TIME as jwt.SignOptions["expiresIn"],
-  };
-
   return jwt.sign(
     {
       userId,
       intent: EMAIL_VERIFICATION_TOKEN_INTENT,
     },
     JWT_SECRET,
-    signOptions,
+    createJwtSignOptions(EMAIL_JWT_EXPIRATION_TIME),
   );
 }
 
