@@ -9,7 +9,7 @@ export async function createContext({
   req,
   res,
 }: trpcExpress.CreateExpressContextOptions) {
-  const authHeader: string | undefined = req.headers.authorization;
+  const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
     return {
