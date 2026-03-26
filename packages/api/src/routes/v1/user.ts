@@ -30,7 +30,7 @@ export const userRouter = router({
         if (!existingUser.isEmailVerified) {
           ConsumeVerificationResendAttempt(input.email);
           await sendVerificationEmail(existingUser.id, input.email);
-          return { message: "verification email sent", email: input.email };
+          return { message: "verification email sent" };
         }
 
         throw new TRPCError({
