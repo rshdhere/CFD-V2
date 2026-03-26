@@ -4,14 +4,14 @@ import { Request, Response } from "express";
 import { JWT_SECRET, REFRESH_TOKEN_SECRET } from "@CFD-V2/config";
 import { refreshTokensTable, usersTable } from "@CFD-V2/drizzle/database";
 import {
-  getVerificationRedirectUrl,
-  isEmailVerificationTokenPayload,
-} from "../email/verification.js";
-import {
   createRefreshToken,
   hashRefreshToken,
   refreshTokenCookieOptions,
 } from "../auth/refresh-token.js";
+import {
+  getVerificationRedirectUrl,
+  isEmailVerificationTokenPayload,
+} from "../email/verification.js";
 
 export async function handleEmailVerification(req: Request, res: Response) {
   const token =
