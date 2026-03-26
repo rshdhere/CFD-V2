@@ -6,6 +6,10 @@
   "scripts": {
     "dev": "bun --watch src/bin.ts"
   },
+  "dependencies": {
+    "@CFD-V2/api": "workspace:*",
+    "@CFD-V2/drizzle": "workspace:*"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
