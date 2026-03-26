@@ -3,7 +3,7 @@ import express from "express";
 import { appRouter } from "./router.js";
 import cookieParser from "cookie-parser";
 import { CLIENT_URL } from "@CFD-V2/config";
-import { createContext } from "./middleware/context.js";
+import { createContext } from "./trpc/context.js";
 import { refreshHandler } from "./handlers/refresh-handler.js";
 import { logoutHandler } from "./handlers/logout-handler.js";
 import * as trpcExpress from "@trpc/server/adapters/express";
@@ -19,7 +19,7 @@ app.use(
 );
 
 app.use(cookieParser());
-app.get("/trpc/verify-email", handleEmailVerification);
+app.get("/verify-email", handleEmailVerification);
 app.use(
   "/trpc",
   trpcExpress.createExpressMiddleware({
