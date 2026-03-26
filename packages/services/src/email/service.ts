@@ -1,8 +1,6 @@
-import {
-  MAX_VERIFICATION_EMAIL_RESENDS,
-  verificationResendAttemptsByEmail,
-} from "@CFD-V2/config";
 import { TRPCError } from "@trpc/server";
+import { verificationResendAttemptsByEmail } from "./rate-limit.js";
+import { MAX_VERIFICATION_EMAIL_RESENDS } from "./constants.js";
 
 function normalizeEmail(email: string) {
   return email.trim().toLowerCase();
