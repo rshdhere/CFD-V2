@@ -18,6 +18,7 @@
     "typescript": "^5"
   },
   "dependencies": {
+    "@CFD-V2/utils": "workspace:*",
     "@CFD-V2/config": "workspace:*",
     "@CFD-V2/drizzle": "workspace:*",
     "@CFD-V2/services": "workspace:*",
