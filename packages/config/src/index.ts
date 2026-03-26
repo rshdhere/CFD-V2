@@ -8,6 +8,20 @@ export const EMAIL_JWT_EXPIRATION_TIME = Bun.env.EMAIL_JWT_EXPIRATION_TIME;
 export const REFRESH_TOKEN_SECRET = Bun.env.REFRESH_TOKEN_SECRET as jwt.Secret;
 export const REFRESH_TOKEN_LIFETIME_DAYS = Bun.env.REFRESH_TOKEN_LIFETIME_DAYS;
 
+export function createJwtSignOptions(
+  expiresIn?: string | number,
+): jwt.SignOptions {
+  const signOptions: jwt.SignOptions = {
+    algorithm: JWT_ALGORITHM,
+  };
+
+  if (expiresIn !== undefined) {
+    signOptions.expiresIn = expiresIn as jwt.SignOptions["expiresIn"];
+  }
+
+  return signOptions;
+}
+
 // RESEND
 export const RESEND_API_KEY = Bun.env.RESEND_API_KEY;
 export const VERIFICATION_EMAIL_FROM = Bun.env.VERIFICATION_EMAIL_FROM;
