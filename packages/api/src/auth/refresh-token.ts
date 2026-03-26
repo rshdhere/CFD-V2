@@ -1,11 +1,9 @@
-import { createHash, randomUUID, timingSafeEqual } from "node:crypto";
 import jwt, { type JwtPayload } from "jsonwebtoken";
+import { createHash, randomUUID, timingSafeEqual } from "node:crypto";
+import { DAY_IN_MS, HASHING_ALGORITHM, DEFAULT_ENCODING } from "@CFD-V2/utils";
 import {
-  DAY_IN_MS,
-  ENCODING_ALGORITHM,
+  createJwtSignOptions,
   ENVIRONMENT,
-  HASHING_ALGORITHM,
-  JWT_ALGORITHM,
   REFRESH_TOKEN_LIFETIME_DAYS,
 } from "@CFD-V2/config";
 
@@ -13,7 +11,7 @@ export const refreshTokenCookieOptions = {
   httpOnly: true,
   secure: ENVIRONMENT === "production",
   sameSite: "strict" as const,
-  maxAge: REFRESH_TOKEN_LIFETIME_DAYS * DAY_IN_MS,
+  maxAge: Number(REFRESH_TOKEN_LIFETIME_DAYS) * DAY_IN_MS,
   path: "/refresh",
 };
 
@@ -33,19 +31,22 @@ export function createRefreshToken(userId: string, secret: jwt.Secret) {
   const tokenId = randomUUID();
 
   return {
-    refreshToken: jwt.sign({ userId, tokenId }, secret, {
-      algorithm: JWT_ALGORITHM,
-      expiresIn: `${REFRESH_TOKEN_LIFETIME_DAYS}d`,
-    }),
+    refreshToken: jwt.sign(
+      { userId, tokenId },
+      secret,
+      createJwtSignOptions(`${REFRESH_TOKEN_LIFETIME_DAYS}d`),
+    ),
     tokenId,
-    expiresAt: new Date(Date.now() + REFRESH_TOKEN_LIFETIME_DAYS * DAY_IN_MS),
+    expiresAt: new Date(
+      Date.now() + Number(REFRESH_TOKEN_LIFETIME_DAYS) * DAY_IN_MS,
+    ),
   };
 }
 
 export function hashRefreshToken(refreshToken: string) {
   return createHash(HASHING_ALGORITHM)
     .update(refreshToken)
-    .digest(ENCODING_ALGORITHM);
+    .digest(DEFAULT_ENCODING);
 }
 
 export function isRefreshTokenPayload(

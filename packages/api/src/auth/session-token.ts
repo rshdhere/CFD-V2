@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { Response } from "express";
 import {
   ACCESS_TOKEN_EXPIRY,
-  JWT_ALGORITHM,
+  createJwtSignOptions,
   JWT_SECRET,
   REFRESH_TOKEN_SECRET,
 } from "@CFD-V2/config";
@@ -37,10 +37,11 @@ export async function createSessionTokens(userId: string, res: Response) {
 
   res.cookie("refreshToken", refreshToken, refreshTokenCookieOptions);
 
-  const accessToken = jwt.sign({ userId }, JWT_SECRET, {
-    algorithm: JWT_ALGORITHM,
-    expiresIn: ACCESS_TOKEN_EXPIRY,
-  });
+  const accessToken = jwt.sign(
+    { userId },
+    JWT_SECRET,
+    createJwtSignOptions(ACCESS_TOKEN_EXPIRY),
+  );
 
   return { accessToken };
 }
