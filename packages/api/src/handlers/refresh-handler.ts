@@ -4,7 +4,7 @@ import { and, db, eq } from "@CFD-V2/drizzle";
 import { refreshTokensTable, usersTable } from "@CFD-V2/drizzle/database";
 import {
   ACCESS_TOKEN_EXPIRY,
-  JWT_ALGORITHM,
+  createJwtSignOptions,
   JWT_SECRET,
   REFRESH_TOKEN_SECRET,
 } from "@CFD-V2/config";
@@ -106,10 +106,11 @@ export async function refreshHandler(req: Request, res: Response) {
       refreshTokenCookieOptions,
     );
 
-    const accessToken = jwt.sign({ userId: decoded.userId }, JWT_SECRET, {
-      algorithm: JWT_ALGORITHM,
-      expiresIn: ACCESS_TOKEN_EXPIRY,
-    });
+    const accessToken = jwt.sign(
+      { userId: decoded.userId },
+      JWT_SECRET,
+      createJwtSignOptions(ACCESS_TOKEN_EXPIRY),
+    );
 
     res.json({ accessToken, message: "accessToken refreshed!" });
   } catch (error) {
