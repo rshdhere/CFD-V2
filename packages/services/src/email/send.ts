@@ -1,4 +1,5 @@
 import { Resend } from "resend";
+import { TRPCError } from "@trpc/server";
 import {
   RESEND_API_KEY,
   SERVER_URL,
@@ -8,8 +9,7 @@ import {
   createEmailVerificationToken,
   createVerificationUrl,
   renderVerificationEmailTemplate,
-} from "@CFD-V2/api/email";
-import { TRPCError } from "@trpc/server";
+} from "./verification.js";
 
 // TODO: moving out from string to strict types
 export async function sendVerificationEmail(userId: string, email: string) {
