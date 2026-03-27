@@ -16,7 +16,8 @@ export async function sendVerificationEmail(userId: string, email: string) {
   if (!RESEND_API_KEY || !VERIFICATION_EMAIL_FROM || !SERVER_URL) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
-      message: "email verification configuration is missing",
+      message:
+        "email verification configuration went missing while sending email to users",
     });
   }
 
