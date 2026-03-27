@@ -15,7 +15,7 @@ export function ConsumeVerificationResendAttempt(email: string) {
   if (currentCount >= MAX_VERIFICATION_EMAIL_RESENDS) {
     throw new TRPCError({
       code: "TOO_MANY_REQUESTS",
-      message: "verification email can be resent only once",
+      message: `verification email can be resent only ${MAX_VERIFICATION_EMAIL_RESENDS} time(s)`,
     });
   }
 
