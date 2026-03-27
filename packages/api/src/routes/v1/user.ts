@@ -29,14 +29,14 @@ export const userRouter = router({
 
         if (!existingUser.isEmailVerified) {
           ConsumeVerificationResendAttempt(input.email);
-          await sendVerificationEmail(existingUser.id, input.email);
-          return { message: "verification email sent" };
+          sendVerificationEmail(existingUser.id, input.email).catch(
+            console.error,
+          );
+
+          return { message: "verification email sent for the old-user" };
         }
 
-        throw new TRPCError({
-          code: "CONFLICT",
-          message: "user already exists",
-        });
+        return { message: "Welcome Back, Please try signing-in." };
       }
 
       const HashedPassword = await Bun.password.hash(input.password);
@@ -56,8 +56,8 @@ export const userRouter = router({
         });
       }
 
-      await sendVerificationEmail(user.userId, input.email);
-      return { message: "verification email sent" };
+      sendVerificationEmail(user.userId, input.email).catch(console.error);
+      return { message: "verification email sent for the new-user" };
     }),
   resendVerificationEmail: publicProcedure
     .input(authSchema.resendVerificationInput)
