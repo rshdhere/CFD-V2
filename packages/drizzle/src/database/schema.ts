@@ -1,12 +1,26 @@
 import {
+  bigint,
   boolean,
   index,
+  integer,
+  numeric,
+  pgEnum,
   pgTable,
+  primaryKey,
   timestamp,
   uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
+
+export const orderTypeEnum = pgEnum("order_type", ["buy", "sell"]);
+
+export const closeReasonEnum = pgEnum("close_reason", [
+  "manual",
+  "take_profit",
+  "stop_loss",
+  "liquidation",
+]);
 
 export const usersTable = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
@@ -19,6 +33,10 @@ export const usersTable = pgTable("users", {
     length: 255,
   }).notNull(),
   isEmailVerified: boolean("is_email_verified").notNull().default(false),
+  balance: numeric("usd_balance", { precision: 18, scale: 2 })
+    .notNull()
+    .default("0"),
+  asset: varchar("asset", { length: 4096 }).notNull().default("{}"),
 });
 
 export const refreshTokensTable = pgTable(
@@ -56,5 +74,122 @@ export const refreshTokensTable = pgTable(
     index("refresh_tokens_expires_at_idx").on(table.expiresAt),
     uniqueIndex("refresh_tokens_token_id_idx").on(table.tokenId),
     uniqueIndex("refresh_tokens_token_hash_uidx").on(table.tokenHash),
+  ],
+);
+
+export const ordersTable = pgTable(
+  "orders",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+    userId: uuid("user_id").references(() => usersTable.id, {
+      onDelete: "cascade",
+    }),
+    type: orderTypeEnum("type").notNull(),
+    margin: numeric("margin", { precision: 18, scale: 8 }).notNull(),
+    leverage: numeric("leverage", { precision: 10, scale: 2 }).notNull(),
+    asset: varchar("asset", { length: 20 }).notNull(),
+    openPrice: numeric("open_price", { precision: 18, scale: 8 }).notNull(),
+    takeProfit: numeric("take_profit", { precision: 18, scale: 8 }),
+    stopLoss: numeric("stop_loss", { precision: 18, scale: 8 }),
+    liquidationPrice: numeric("liquidation_price", {
+      precision: 18,
+      scale: 8,
+    }),
+
+    isActive: boolean("is_active").default(true).notNull(),
+
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+      mode: "date",
+    })
+      .defaultNow()
+      .notNull(),
+
+    updatedAt: timestamp("updated_at", {
+      withTimezone: true,
+      mode: "date",
+    })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("orders_user_id_idx").on(table.userId),
+    index("orders_asset_idx").on(table.asset),
+    index("orders_is_active_idx").on(table.isActive),
+  ],
+);
+
+/** Binance aggTrade history (append-only); `a` is unique per symbol, not globally. */
+export const tradesTable = pgTable(
+  "trades",
+  {
+    id: integer("id").generatedByDefaultAsIdentity().notNull(),
+    symbol: varchar("symbol", { length: 32 }).notNull(),
+    price: bigint("price", { mode: "bigint" }).notNull(),
+    tradeId: bigint("trade_id", { mode: "bigint" }).notNull(),
+    timestamp: timestamp("timestamp", {
+      withTimezone: true,
+      mode: "date",
+      precision: 3,
+    }).notNull(),
+    quantity: bigint("quantity", { mode: "bigint" }).notNull(),
+  },
+  (table) => [
+    primaryKey({ columns: [table.id, table.timestamp] }),
+    uniqueIndex("trades_symbol_trade_id_uidx").on(table.symbol, table.tradeId),
+    index("trades_symbol_timestamp_idx").on(table.symbol, table.timestamp),
+  ],
+);
+
+export const closedOrdersTable = pgTable(
+  "closed_orders",
+  {
+    id: uuid("id").defaultRandom().primaryKey(),
+
+    userId: uuid("user_id")
+      .references(() => usersTable.id, { onDelete: "cascade" })
+      .notNull(),
+
+    orderId: uuid("order_id")
+      .references(() => ordersTable.id, { onDelete: "cascade" })
+      .notNull(),
+
+    type: orderTypeEnum("type").notNull(),
+
+    asset: varchar("asset", { length: 20 }).notNull(),
+
+    margin: numeric("margin", { precision: 18, scale: 8 }).notNull(),
+
+    leverage: numeric("leverage", { precision: 10, scale: 2 }).notNull(),
+
+    openPrice: numeric("open_price", { precision: 18, scale: 8 }).notNull(),
+
+    closePrice: numeric("close_price", {
+      precision: 18,
+      scale: 8,
+    }).notNull(),
+
+    pnl: numeric("pnl", { precision: 18, scale: 8 }).notNull(),
+
+    closeReason: closeReasonEnum("close_reason").notNull(),
+
+    createdAt: timestamp("created_at", {
+      withTimezone: true,
+      mode: "date",
+    })
+      .defaultNow()
+      .notNull(),
+
+    closedAt: timestamp("closed_at", {
+      withTimezone: true,
+      mode: "date",
+    })
+      .defaultNow()
+      .notNull(),
+  },
+  (table) => [
+    index("closed_orders_user_id_idx").on(table.userId),
+    index("closed_orders_asset_idx").on(table.asset),
+    index("closed_orders_closed_at_idx").on(table.closedAt),
   ],
 );
