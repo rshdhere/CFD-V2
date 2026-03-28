@@ -1,12 +1,20 @@
 {
   "name": "@CFD-v2/price-poller",
-  "module": "index.ts",
+  "module": "src/bin.ts",
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "bun --watch src/index.ts"
+    "dev": "bun --watch src/bin.ts"
+  },
+  "dependencies": {
+    "@CFD-V2/config": "workspace:*",
+    "@CFD-V2/drizzle": "workspace:*",
+    "@CFD-V2/validators": "workspace:*",
+    "dotenv": "^17.3.1",
+    "redis": "^5.10.1"
   },
   "devDependencies": {
+    "@CFD-V2/typescript-config": "workspace:*",
     "@types/bun": "latest"
   },
   "peerDependencies": {
