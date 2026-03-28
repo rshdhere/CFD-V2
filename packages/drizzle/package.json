@@ -3,6 +3,9 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "scripts": {
+    "db:seed": "bun run src/seed.ts"
+  },
   "exports": {
     ".": "./src/index.ts",
     "./health": "./src/health.ts",
