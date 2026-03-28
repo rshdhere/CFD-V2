@@ -6,13 +6,19 @@
   "exports": {
     ".": "./src/index.ts",
     "./email": "./src/email/service.ts",
+    "./market": "./src/market/binance.service.ts",
+    "./trading": "./src/trading/pnl.ts",
     "./email/send": "./src/email/send.ts",
-    "./email/constants": "./src/email/constants.ts"
+    "./email/constants": "./src/email/constants.ts",
+    "./redis": "./src/redis/client.ts"
   },
   "dependencies": {
     "@CFD-V2/config": "workspace:*",
-    "@trpc/server": "^11.15.0",
+    "@CFD-V2/utils": "workspace:*",
+    "@CFD-V2/validators": "workspace:*",
+    "@trpc/server": "^11.15.1",
     "jsonwebtoken": "^9.0.3",
+    "redis": "^5.10.1",
     "resend": "^6.9.4"
   },
   "devDependencies": {
