@@ -2,10 +2,11 @@ import jwt from "jsonwebtoken";
 import { Response } from "express";
 import {
   ACCESS_TOKEN_EXPIRY,
-  createJwtSignOptions,
+  JWT_ALGORITHM,
   JWT_SECRET,
   REFRESH_TOKEN_SECRET,
 } from "@CFD-V2/config";
+import { createJwtSignOptions } from "@CFD-V2/utils";
 import { db } from "@CFD-V2/drizzle";
 import { refreshTokensTable } from "@CFD-V2/drizzle/database";
 import { TRPCError } from "@trpc/server";
@@ -40,7 +41,7 @@ export async function createSessionTokens(userId: string, res: Response) {
   const accessToken = jwt.sign(
     { userId },
     JWT_SECRET,
-    createJwtSignOptions(ACCESS_TOKEN_EXPIRY),
+    createJwtSignOptions(JWT_ALGORITHM, ACCESS_TOKEN_EXPIRY),
   );
 
   return { accessToken };

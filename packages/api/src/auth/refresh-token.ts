@@ -1,9 +1,14 @@
 import jwt, { type JwtPayload } from "jsonwebtoken";
 import { createHash, randomUUID, timingSafeEqual } from "node:crypto";
-import { DAY_IN_MS, HASHING_ALGORITHM, DEFAULT_ENCODING } from "@CFD-V2/utils";
 import {
   createJwtSignOptions,
+  DAY_IN_MS,
+  DEFAULT_ENCODING,
+  HASHING_ALGORITHM,
+} from "@CFD-V2/utils";
+import {
   ENVIRONMENT,
+  JWT_ALGORITHM,
   REFRESH_TOKEN_LIFETIME_DAYS,
 } from "@CFD-V2/config";
 
@@ -34,7 +39,7 @@ export function createRefreshToken(userId: string, secret: jwt.Secret) {
     refreshToken: jwt.sign(
       { userId, tokenId },
       secret,
-      createJwtSignOptions(`${REFRESH_TOKEN_LIFETIME_DAYS}d`),
+      createJwtSignOptions(JWT_ALGORITHM, `${REFRESH_TOKEN_LIFETIME_DAYS}d`),
     ),
     tokenId,
     expiresAt: new Date(
