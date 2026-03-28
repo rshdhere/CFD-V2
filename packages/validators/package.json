@@ -5,7 +5,14 @@
   "private": true,
   "exports": {
     ".": "./src/index.ts",
-    "./user": "./src/user/validation.ts"
+    "./user": "./src/user/validation.ts",
+    "./trades": "./src/trades/validation.ts",
+    "./asset": "./src/asset/validation.ts",
+    "./trade": "./src/trade/validation.ts",
+    "./candles": "./src/candles/validation.ts",
+    "./candles/types": "./src/candles/types.ts",
+    "./binance": "./src/binance/types.ts",
+    "./redis/types": "./src/redis/types.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"
