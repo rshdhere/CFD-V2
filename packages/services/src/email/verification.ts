@@ -2,11 +2,12 @@ import jwt from "jsonwebtoken";
 import { TRPCError } from "@trpc/server";
 import { readFile } from "node:fs/promises";
 import {
-  createJwtSignOptions,
   EMAIL_JWT_EXPIRATION_TIME,
+  JWT_ALGORITHM,
   JWT_SECRET,
   SERVER_URL,
 } from "@CFD-V2/config";
+import { createJwtSignOptions } from "@CFD-V2/utils";
 import {
   EMAIL_VERIFICATION_TOKEN_INTENT,
   VERIFICATION_URL_PLACEHOLDER,
@@ -31,7 +32,7 @@ export function createEmailVerificationToken(userId: string) {
       intent: EMAIL_VERIFICATION_TOKEN_INTENT,
     },
     JWT_SECRET,
-    createJwtSignOptions(EMAIL_JWT_EXPIRATION_TIME),
+    createJwtSignOptions(JWT_ALGORITHM, EMAIL_JWT_EXPIRATION_TIME),
   );
 }
 
