@@ -1,12 +1,9 @@
 import {
-  bigint,
   boolean,
   index,
-  integer,
   numeric,
   pgEnum,
   pgTable,
-  primaryKey,
   timestamp,
   uniqueIndex,
   uuid,
@@ -116,28 +113,6 @@ export const ordersTable = pgTable(
     index("orders_user_id_idx").on(table.userId),
     index("orders_asset_idx").on(table.asset),
     index("orders_is_active_idx").on(table.isActive),
-  ],
-);
-
-/** Binance aggTrade history (append-only); `a` is unique per symbol, not globally. */
-export const tradesTable = pgTable(
-  "trades",
-  {
-    id: integer("id").generatedByDefaultAsIdentity().notNull(),
-    symbol: varchar("symbol", { length: 32 }).notNull(),
-    price: bigint("price", { mode: "bigint" }).notNull(),
-    tradeId: bigint("trade_id", { mode: "bigint" }).notNull(),
-    timestamp: timestamp("timestamp", {
-      withTimezone: true,
-      mode: "date",
-      precision: 3,
-    }).notNull(),
-    quantity: bigint("quantity", { mode: "bigint" }).notNull(),
-  },
-  (table) => [
-    primaryKey({ columns: [table.id, table.timestamp] }),
-    uniqueIndex("trades_symbol_trade_id_uidx").on(table.symbol, table.tradeId),
-    index("trades_symbol_timestamp_idx").on(table.symbol, table.timestamp),
   ],
 );
 
