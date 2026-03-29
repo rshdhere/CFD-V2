@@ -21,8 +21,9 @@ import {
 export async function refreshHandler(req: Request, res: Response) {
   const refreshToken: string | undefined = req.cookies["refreshToken"];
 
+  // 200 (not 401): anonymous users hit this on every load via initAuth; 401 logs as a console error.
   if (!refreshToken) {
-    res.status(401).json({ message: "refresh token not found" });
+    res.status(200).json({ message: "no session" });
     return;
   }
 
