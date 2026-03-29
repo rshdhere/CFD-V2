@@ -1,5 +1,5 @@
 import { CLIENT_URL } from "@CFD-V2/config";
-import { EmailVerificationTokenPayload } from "@/src/types/types.js";
+import type { EmailVerificationTokenPayload } from "../types/types.js";
 import { EMAIL_VERIFICATION_TOKEN_INTENT } from "@CFD-V2/services/email/constants";
 
 export function isEmailVerificationTokenPayload(
