@@ -9,6 +9,7 @@ import { OpenPositionsTable } from "@/components/trading/open-positions-table";
 import { TradeHistoryTable } from "@/components/trading/trade-history-table";
 import { TradeTicket } from "@/components/trading/trade-ticket";
 import { useCandleWindow } from "@/hooks/use-candle-window";
+import { useLiveAssetQuotes } from "@/hooks/use-live-asset-quotes";
 import { useOpenPositionsPolling } from "@/hooks/use-open-positions";
 import { getErrorMessage } from "@/lib/trading-format";
 import { getCandleRefreshIntervalMs } from "@/lib/trading-time";
@@ -39,7 +40,6 @@ export function TradingShell() {
 
   const assetsQuery = useQuery({
     ...trpc.v1.asset.getAll.queryOptions(),
-    refetchInterval: 4_000,
   });
 
   const candlesQuery = useQuery({
@@ -54,20 +54,44 @@ export function TradingShell() {
 
   const closedPositionsQuery = useQuery({
     ...trpc.v1.trades.getAll.queryOptions(),
-    refetchInterval: 10_000,
+  });
+  const balanceQuery = useQuery({
+    ...trpc.v1.user.balance.queryOptions(),
+  });
+
+  const assetSymbols = useMemo(
+    () => (assetsQuery.data?.assets ?? []).map((asset) => asset.symbol),
+    [assetsQuery.data?.assets],
+  );
+
+  const liveQuotes = useLiveAssetQuotes({
+    enabled: true,
+    symbols: assetSymbols,
   });
 
   const openPositions = useOpenPositionsPolling({
     enabled: true,
-    pollIntervalMs: 5_000,
+    pollIntervalMs: null,
   });
 
   const openTradeMutation = useMutation(trpc.v1.trade.open.mutationOptions());
   const closeTradeMutation = useMutation(trpc.v1.trade.close.mutationOptions());
 
   const assets = useMemo(
-    () => assetsQuery.data?.assets ?? [],
-    [assetsQuery.data?.assets],
+    () =>
+      (assetsQuery.data?.assets ?? []).map((asset) => {
+        const streamQuote = liveQuotes.quotesBySymbol[asset.symbol];
+        if (!streamQuote) {
+          return asset;
+        }
+
+        return {
+          ...asset,
+          buyPrice: streamQuote.buyPrice,
+          sellPrice: streamQuote.sellPrice,
+        };
+      }),
+    [assetsQuery.data?.assets, liveQuotes.quotesBySymbol],
   );
   const candles = useMemo(
     () => candlesQuery.data?.candles ?? [],
@@ -108,6 +132,7 @@ export function TradingShell() {
       await Promise.all([
         openPositions.refresh(),
         closedPositionsQuery.refetch(),
+        balanceQuery.refetch(),
       ]);
     } catch (error) {
       setTicketErrorMessage(getErrorMessage(error, "Failed to open position"));
@@ -126,6 +151,7 @@ export function TradingShell() {
       await Promise.all([
         openPositions.refresh(),
         closedPositionsQuery.refetch(),
+        balanceQuery.refetch(),
       ]);
     } catch (error) {
       setCloseErrorMessage(getErrorMessage(error, "Failed to close position"));
@@ -165,11 +191,13 @@ export function TradingShell() {
               timeframe={timeframe}
               isLoading={assetsQuery.isLoading}
               isRefreshing={assetsQuery.isRefetching}
+              isLiveConnected={liveQuotes.isConnected}
               errorMessage={
                 assetsQuery.error
                   ? getErrorMessage(assetsQuery.error, "Failed to load quotes")
                   : null
               }
+              streamErrorMessage={liveQuotes.errorMessage}
               onAssetChange={setSelectedAsset}
               onTimeframeChange={setTimeframe}
             />
@@ -193,6 +221,16 @@ export function TradingShell() {
             <TradeTicket
               asset={selectedAsset}
               quote={selectedQuote}
+              availableBalance={balanceQuery.data?.balance ?? null}
+              isBalanceLoading={balanceQuery.isLoading}
+              balanceErrorMessage={
+                balanceQuery.error
+                  ? getErrorMessage(
+                      balanceQuery.error,
+                      "Failed to load available balance",
+                    )
+                  : null
+              }
               isSubmitting={openTradeMutation.isPending}
               successMessage={ticketSuccessMessage}
               errorMessage={ticketErrorMessage}

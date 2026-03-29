@@ -10,7 +10,7 @@ const tradesOutputSchema = z
     openPrice: z.number().positive(),
     takeProfit: z.number().positive().optional(),
     stopLoss: z.number().positive().optional(),
-    liquidationPrice: z.number().positive().optional(),
+    liquidationPrice: z.number().nonnegative().optional(),
   })
   .strict();
 

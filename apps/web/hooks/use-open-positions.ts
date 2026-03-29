@@ -8,7 +8,7 @@ import { useTRPC } from "@/utils/trpc";
 
 type UseOpenPositionsPollingOptions = {
   enabled: boolean;
-  pollIntervalMs?: number;
+  pollIntervalMs?: number | null;
 };
 
 type UseOpenPositionsPollingReturn = {
@@ -21,13 +21,14 @@ type UseOpenPositionsPollingReturn = {
 
 export function useOpenPositionsPolling({
   enabled,
-  pollIntervalMs = 5_000,
+  pollIntervalMs = null,
 }: UseOpenPositionsPollingOptions): UseOpenPositionsPollingReturn {
   const trpc = useTRPC();
   const [positions, setPositions] = useState<OpenPosition[]>([]);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [hasFetchedOnce, setHasFetchedOnce] = useState(false);
   const inFlightRef = useRef(false);
+  const refreshRef = useRef<() => Promise<void>>(async () => undefined);
 
   const openPositionsMutation = useMutation(
     trpc.v1.trades.open.mutationOptions(),
@@ -52,6 +53,10 @@ export function useOpenPositionsPolling({
   }, [enabled, openPositionsMutation]);
 
   useEffect(() => {
+    refreshRef.current = refresh;
+  }, [refresh]);
+
+  useEffect(() => {
     if (!enabled) {
       setPositions([]);
       setErrorMessage(null);
@@ -59,21 +64,25 @@ export function useOpenPositionsPolling({
       return;
     }
 
-    void refresh();
+    void refreshRef.current();
+    if (pollIntervalMs == null || pollIntervalMs <= 0) {
+      return;
+    }
+
     const intervalId = window.setInterval(() => {
-      void refresh();
+      void refreshRef.current();
     }, pollIntervalMs);
 
     return () => {
       window.clearInterval(intervalId);
     };
-  }, [enabled, pollIntervalMs, refresh]);
+  }, [enabled, pollIntervalMs]);
 
   return {
     positions,
     isLoading: enabled && !hasFetchedOnce && openPositionsMutation.isPending,
     isRefreshing: openPositionsMutation.isPending,
     errorMessage,
-    refresh,
+    refresh: async () => refreshRef.current(),
   };
 }

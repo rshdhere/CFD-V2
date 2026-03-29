@@ -12,7 +12,11 @@ import {
 } from "./verification.js";
 
 // TODO: moving out from string to strict types
-export async function sendVerificationEmail(userId: string, email: string) {
+export async function sendVerificationEmail(
+  userId: string,
+  email: string,
+  clientOrigin?: string,
+) {
   if (!RESEND_API_KEY || !VERIFICATION_EMAIL_FROM || !SERVER_URL) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
@@ -22,7 +26,10 @@ export async function sendVerificationEmail(userId: string, email: string) {
   }
 
   const verificationToken = createEmailVerificationToken(userId);
-  const verificationUrl = createVerificationUrl(verificationToken);
+  const verificationUrl = createVerificationUrl(
+    verificationToken,
+    clientOrigin,
+  );
   const html = await renderVerificationEmailTemplate(verificationUrl);
   const resend = new Resend(RESEND_API_KEY);
 

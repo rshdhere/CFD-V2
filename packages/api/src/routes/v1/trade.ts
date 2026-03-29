@@ -15,6 +15,7 @@ import {
   tradeSchema,
   type TradeAsset,
 } from "@CFD-V2/validators/trade";
+import { ensureInitialTradingBalance } from "../../users/initial-balance.js";
 
 export const tradeRouter = router({
   open: privateProcedure
@@ -48,7 +49,10 @@ export const tradeRouter = router({
 
       const openPrice = Number(openPriceRaw);
 
-      const usdBalance = Number(user.balance);
+      const usdBalance = await ensureInitialTradingBalance(
+        userId,
+        Number(user.balance),
+      );
       if (
         !openPriceRaw ||
         Number.isNaN(openPrice) ||

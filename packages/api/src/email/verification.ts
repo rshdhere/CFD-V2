@@ -1,6 +1,6 @@
-import { CLIENT_URL } from "@CFD-V2/config";
 import type { EmailVerificationTokenPayload } from "../types/types.js";
 import { EMAIL_VERIFICATION_TOKEN_INTENT } from "@CFD-V2/services/email/constants";
+import { resolveClientOrigin } from "../http/client-origin.js";
 
 export function isEmailVerificationTokenPayload(
   value: unknown,
@@ -16,13 +16,15 @@ export function isEmailVerificationTokenPayload(
   );
 }
 
-export function getVerificationRedirectUrl() {
-  if (!CLIENT_URL) {
+export function getVerificationRedirectUrl(clientOrigin?: string) {
+  const resolvedClientOrigin = resolveClientOrigin(clientOrigin);
+
+  if (!resolvedClientOrigin) {
     return null;
   }
 
   try {
-    const redirectUrl = new URL("/", CLIENT_URL);
+    const redirectUrl = new URL("/", resolvedClientOrigin);
     redirectUrl.searchParams.set("emailVerified", "1");
     return redirectUrl.toString();
   } catch {

@@ -36,7 +36,7 @@ export function createEmailVerificationToken(userId: string) {
   );
 }
 
-export function createVerificationUrl(token: string) {
+export function createVerificationUrl(token: string, clientOrigin?: string) {
   if (!SERVER_URL) {
     throw new TRPCError({
       code: "INTERNAL_SERVER_ERROR",
@@ -47,6 +47,9 @@ export function createVerificationUrl(token: string) {
   try {
     const verificationUrl = new URL("/verify-email", SERVER_URL);
     verificationUrl.searchParams.set("token", token);
+    if (clientOrigin) {
+      verificationUrl.searchParams.set("clientOrigin", clientOrigin);
+    }
     return verificationUrl.toString();
   } catch {
     throw new TRPCError({

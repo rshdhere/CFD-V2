@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { formatPrice } from "@/lib/trading-format";
 import { TIMEFRAME_LABELS } from "@/lib/trading-time";
 import {
@@ -16,7 +17,9 @@ type AssetSelectorProps = {
   timeframe: TradingTimeframe;
   isLoading: boolean;
   isRefreshing: boolean;
+  isLiveConnected: boolean;
   errorMessage: string | null;
+  streamErrorMessage: string | null;
   onAssetChange: (asset: TradingAsset) => void;
   onTimeframeChange: (timeframe: TradingTimeframe) => void;
 };
@@ -35,10 +38,22 @@ export function AssetSelector({
   timeframe,
   isLoading,
   isRefreshing,
+  isLiveConnected,
   errorMessage,
+  streamErrorMessage,
   onAssetChange,
   onTimeframeChange,
 }: AssetSelectorProps) {
+  const statusMessage = isLoading
+    ? "Loading prices..."
+    : streamErrorMessage
+      ? "Live stream interrupted. Showing latest known prices."
+      : isLiveConnected
+        ? "Live quotes via websocket"
+        : isRefreshing
+          ? "Refreshing quotes..."
+          : "Connecting to live quote stream...";
+
   return (
     <section className="cfd-surface rounded-xl border p-4">
       <div className="mb-4 flex items-center justify-between gap-3">
@@ -46,13 +61,7 @@ export function AssetSelector({
           <h2 className="cfd-muted text-sm font-semibold tracking-wide uppercase">
             Market
           </h2>
-          <p className="cfd-muted text-sm">
-            {isLoading
-              ? "Loading prices..."
-              : isRefreshing
-                ? "Refreshing quotes..."
-                : "Live quotes for supported assets"}
-          </p>
+          <p className="cfd-muted text-sm">{statusMessage}</p>
         </div>
         <div className="cfd-surface-subtle flex items-center gap-2 rounded-md border p-1">
           {TRADING_TIMEFRAMES.map((option) => (
@@ -72,6 +81,9 @@ export function AssetSelector({
       {errorMessage ? (
         <p className="cfd-negative-text mb-3 text-sm">{errorMessage}</p>
       ) : null}
+      {!errorMessage && streamErrorMessage ? (
+        <p className="cfd-negative-text mb-3 text-sm">{streamErrorMessage}</p>
+      ) : null}
 
       <div className="grid gap-2 sm:grid-cols-3">
         {assets.map((asset) => {
@@ -89,7 +101,17 @@ export function AssetSelector({
               onClick={() => onAssetChange(asset.symbol as TradingAsset)}
             >
               <div className="mb-2 flex items-center justify-between">
-                <span className="text-sm font-semibold">{asset.name}</span>
+                <div className="flex items-center gap-2">
+                  <Image
+                    src={asset.imageUrl}
+                    alt={`${asset.name} logo`}
+                    width={18}
+                    height={18}
+                    unoptimized
+                    className="shrink-0 rounded-full"
+                  />
+                  <span className="text-sm font-semibold">{asset.name}</span>
+                </div>
                 <span className="cfd-muted text-xs">{asset.symbol}/USDT</span>
               </div>
               <div className="space-y-1 text-xs">

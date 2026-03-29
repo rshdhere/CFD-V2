@@ -16,6 +16,10 @@ import {
 export async function handleEmailVerification(req: Request, res: Response) {
   const token =
     typeof req.query.token === "string" ? req.query.token : undefined;
+  const clientOrigin =
+    typeof req.query.clientOrigin === "string"
+      ? req.query.clientOrigin
+      : undefined;
 
   if (!token) {
     res.status(400).send("verification token is missing");
@@ -69,7 +73,7 @@ export async function handleEmailVerification(req: Request, res: Response) {
       refreshTokenCookieOptions,
     );
 
-    const redirectUrl = getVerificationRedirectUrl();
+    const redirectUrl = getVerificationRedirectUrl(clientOrigin);
 
     if (redirectUrl) {
       res.redirect(302, redirectUrl);

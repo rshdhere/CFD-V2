@@ -1,17 +1,30 @@
 import { db, eq } from "@CFD-V2/drizzle";
 import { TRPCError } from "@trpc/server";
-import { authSchema } from "@CFD-V2/validators";
-import { usersTable } from "@CFD-V2/drizzle/database";
-import { publicProcedure, router } from "../../trpc.js";
+import { authSchema } from "@CFD-V2/validators/user";
+import { INITIAL_USER_USD_BALANCE, usersTable } from "@CFD-V2/drizzle/database";
+import { privateProcedure, publicProcedure, router } from "../../trpc.js";
 import { createSessionTokens } from "../../auth/session-tokens.js";
 import { sendVerificationEmail } from "@CFD-V2/services/email/send";
 import { ConsumeVerificationResendAttempt } from "@CFD-V2/services/email";
+import { resolveClientOrigin } from "../../http/client-origin.js";
+import { ensureInitialTradingBalance } from "../../users/initial-balance.js";
+
+function getRequestOriginHeader(originHeader: string | string[] | undefined) {
+  if (Array.isArray(originHeader)) {
+    return originHeader[0];
+  }
+
+  return originHeader;
+}
 
 export const userRouter = router({
   signup: publicProcedure
     .input(authSchema.input)
     .output(authSchema.signupOutput)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      const clientOrigin = resolveClientOrigin(
+        getRequestOriginHeader(ctx.res.req.headers.origin),
+      );
       const users = await db
         .select()
         .from(usersTable)
@@ -27,11 +40,18 @@ export const userRouter = router({
           });
         }
 
+        await ensureInitialTradingBalance(
+          existingUser.id,
+          Number(existingUser.balance),
+        );
+
         if (!existingUser.isEmailVerified) {
           ConsumeVerificationResendAttempt(input.email);
-          sendVerificationEmail(existingUser.id, input.email).catch(
-            console.error,
-          );
+          sendVerificationEmail(
+            existingUser.id,
+            input.email,
+            clientOrigin,
+          ).catch(console.error);
 
           return { message: "verification email sent for the old-user" };
         }
@@ -46,6 +66,7 @@ export const userRouter = router({
         .values({
           email: input.email,
           password: HashedPassword,
+          balance: INITIAL_USER_USD_BALANCE,
         })
         .returning({ userId: usersTable.id });
 
@@ -56,13 +77,18 @@ export const userRouter = router({
         });
       }
 
-      sendVerificationEmail(user.userId, input.email).catch(console.error);
+      sendVerificationEmail(user.userId, input.email, clientOrigin).catch(
+        console.error,
+      );
       return { message: "verification email sent for the new-user" };
     }),
   resendVerificationEmail: publicProcedure
     .input(authSchema.resendVerificationInput)
     .output(authSchema.signupOutput)
-    .mutation(async ({ input }) => {
+    .mutation(async ({ input, ctx }) => {
+      const clientOrigin = resolveClientOrigin(
+        getRequestOriginHeader(ctx.res.req.headers.origin),
+      );
       const [user] = await db
         .select({
           userId: usersTable.id,
@@ -77,7 +103,7 @@ export const userRouter = router({
       }
 
       ConsumeVerificationResendAttempt(input.email);
-      await sendVerificationEmail(user.userId, input.email);
+      await sendVerificationEmail(user.userId, input.email, clientOrigin);
       return { message: "verification email sent" };
     }),
   login: publicProcedure
@@ -89,6 +115,7 @@ export const userRouter = router({
           userId: usersTable.id,
           password: usersTable.password,
           isEmailVerified: usersTable.isEmailVerified,
+          balance: usersTable.balance,
         })
         .from(usersTable)
         .where(eq(usersTable.email, input.email));
@@ -119,7 +146,34 @@ export const userRouter = router({
         });
       }
 
+      await ensureInitialTradingBalance(user.userId, Number(user.balance));
+
       const tokens = await createSessionTokens(user.userId, ctx.res);
       return { ...tokens, message: "login successful, welcome back" };
+    }),
+  balance: privateProcedure
+    .output(authSchema.balanceOutput)
+    .query(async ({ ctx }) => {
+      const userId = ctx.userId;
+      const [user] = await db
+        .select({
+          balance: usersTable.balance,
+        })
+        .from(usersTable)
+        .where(eq(usersTable.id, userId))
+        .limit(1);
+
+      if (!user) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "user not found",
+        });
+      }
+
+      const balance = await ensureInitialTradingBalance(
+        userId,
+        Number(user.balance),
+      );
+      return { balance };
     }),
 });

@@ -2,12 +2,12 @@ import cors from "cors";
 import express from "express";
 import { appRouter } from "./router.js";
 import cookieParser from "cookie-parser";
-import { CLIENT_URL } from "@CFD-V2/config";
 import { createContext } from "./trpc/context.js";
 import { refreshHandler } from "./handlers/refresh-handler.js";
 import { logoutHandler } from "./handlers/logout-handler.js";
 import * as trpcExpress from "@trpc/server/adapters/express";
 import { handleEmailVerification } from "./handlers/email-handler.js";
+import { CLIENT_URL } from "@CFD-V2/config";
 
 export const app = express();
 

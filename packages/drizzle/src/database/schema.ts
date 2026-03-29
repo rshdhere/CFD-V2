@@ -19,6 +19,8 @@ export const closeReasonEnum = pgEnum("close_reason", [
   "liquidation",
 ]);
 
+export const INITIAL_USER_USD_BALANCE = "50000.00";
+
 export const usersTable = pgTable("users", {
   id: uuid("id").defaultRandom().primaryKey(),
   email: varchar("email", {
@@ -32,7 +34,7 @@ export const usersTable = pgTable("users", {
   isEmailVerified: boolean("is_email_verified").notNull().default(false),
   balance: numeric("usd_balance", { precision: 18, scale: 2 })
     .notNull()
-    .default("0"),
+    .default(INITIAL_USER_USD_BALANCE),
   asset: varchar("asset", { length: 4096 }).notNull().default("{}"),
 });
 

@@ -13,6 +13,7 @@ import {
   type TradeDirection,
   type TradeLeverage,
   type TradeOpenInput,
+  type TradingBalance,
   type TradingAsset,
 } from "@/lib/trading-types";
 import { cn } from "@/lib/utils";
@@ -20,6 +21,9 @@ import { cn } from "@/lib/utils";
 type TradeTicketProps = {
   asset: TradingAsset;
   quote: AssetQuote | undefined;
+  availableBalance: TradingBalance | null;
+  isBalanceLoading: boolean;
+  balanceErrorMessage: string | null;
   isSubmitting: boolean;
   successMessage: string | null;
   errorMessage: string | null;
@@ -29,6 +33,9 @@ type TradeTicketProps = {
 export function TradeTicket({
   asset,
   quote,
+  availableBalance,
+  isBalanceLoading,
+  balanceErrorMessage,
   isSubmitting,
   successMessage,
   errorMessage,
@@ -118,6 +125,17 @@ export function TradeTicket({
       <p className="cfd-muted mt-1 text-sm">
         Place a {asset}/USDT CFD order with leverage and optional TP/SL.
       </p>
+      <div className="cfd-surface-subtle mt-3 rounded-md border p-3">
+        <p className="cfd-muted text-xs">Available balance</p>
+        <p className="text-base font-semibold">
+          {isBalanceLoading ? "Loading..." : formatUsd(availableBalance)}
+        </p>
+        {balanceErrorMessage ? (
+          <p className="cfd-negative-text mt-1 text-xs">
+            {balanceErrorMessage}
+          </p>
+        ) : null}
+      </div>
 
       <div className="mt-4 grid grid-cols-2 gap-2">
         <button
@@ -149,7 +167,9 @@ export function TradeTicket({
         </p>
         <p className="cfd-muted mt-1 text-xs">
           Estimated liquidation:{" "}
-          {estimatedLiquidation ? formatPrice(estimatedLiquidation) : "--"}
+          {estimatedLiquidation != null
+            ? formatPrice(estimatedLiquidation)
+            : "--"}
         </p>
       </div>
 

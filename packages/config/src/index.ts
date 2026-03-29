@@ -23,6 +23,8 @@ export const BATCH_TIMMINGS = 10_000;
 export const PRECISION = 10_000;
 
 // CLICKHOUSE (price-poller market trades)
+const chUrl = process.env.CLICKHOUSE_URL?.trim();
+export const CLICKHOUSE_URL = chUrl && chUrl.length > 0 ? chUrl : undefined;
 const chDb = process.env.CLICKHOUSE_DATABASE?.trim();
 export const CLICKHOUSE_DATABASE = chDb && chDb.length > 0 ? chDb : "default";
 export const CLICKHOUSE_USERNAME =

@@ -18,6 +18,7 @@ export type OpenPosition =
   RouterOutputs["v1"]["trades"]["open"]["trades"][number];
 export type ClosedPosition =
   RouterOutputs["v1"]["trades"]["getAll"]["trades"][number];
+export type TradingBalance = RouterOutputs["v1"]["user"]["balance"]["balance"];
 
 export const TRADING_TIMEFRAMES: TradingTimeframe[] = ["1m", "1d", "1w"];
 export const TRADING_LEVERAGES: TradeLeverage[] = [1, 5, 10, 20, 100];

@@ -36,4 +36,10 @@ export const authSchema = {
       message: z.string(),
     })
     .strict(),
+
+  balanceOutput: z
+    .object({
+      balance: z.number().nonnegative(),
+    })
+    .strict(),
 };
