@@ -2,8 +2,8 @@ import { db, eq } from "@CFD-V2/drizzle";
 import { TRPCError } from "@trpc/server";
 import { authSchema } from "@CFD-V2/validators";
 import { usersTable } from "@CFD-V2/drizzle/database";
-import { publicProcedure, router } from "@/src/trpc.js";
-import { createSessionTokens } from "@/src/auth/session-tokens.js";
+import { publicProcedure, router } from "../../trpc.js";
+import { createSessionTokens } from "../../auth/session-tokens.js";
 import { sendVerificationEmail } from "@CFD-V2/services/email/send";
 import { ConsumeVerificationResendAttempt } from "@CFD-V2/services/email";
 
