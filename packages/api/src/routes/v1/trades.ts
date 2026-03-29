@@ -1,6 +1,6 @@
 import { and, db, eq } from "@CFD-V2/drizzle";
 import { orderSchema } from "@CFD-V2/validators/trades";
-import { privateProcedure, router } from "@/src/trpc.js";
+import { privateProcedure, router } from "../../trpc.js";
 import { closedOrdersTable, ordersTable } from "@CFD-V2/drizzle/database";
 
 export const tradesRouter = router({
