@@ -1,5 +1,6 @@
 import { BATCH_TIMMINGS, BINANCE_URL, REDIS_URL } from "@CFD-V2/config";
 import { createClient } from "redis";
+import { ensureClickHouseConnected } from "./clickhouse.js";
 import { saveTradeBatch } from "./ops/db-ops.js";
 import { publishQuoteToRedis } from "./ops/redis-ops.js";
 import {
@@ -23,7 +24,10 @@ export async function main() {
   const redis = createClient({ url: redisUrl });
   redis.on("error", (err) => console.error("Redis client error", err));
   await redis.connect();
-  console.log("connected to redis successfully");
+  console.log("[redis]: connected to redis");
+
+  await ensureClickHouseConnected();
+  console.log("[clickhouse]: connected to clickhouse");
 
   let tradeBatch: TradeBatchItem[] = [];
 
@@ -36,7 +40,7 @@ export async function main() {
   const ws = new WebSocket(BINANCE_URL);
 
   ws.addEventListener("open", () => {
-    console.log("connected to binance websocket");
+    console.log("[binance]: connected to binance websocket");
     ws.send(
       JSON.stringify({
         method: "SUBSCRIBE",
