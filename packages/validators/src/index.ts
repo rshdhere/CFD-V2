@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { authSchema } from "./user/validation.js";
-import { candlesSchema } from "./candles/validation.js";
+import { authSchema } from "./user/validation";
+import { candlesSchema } from "./candles/validation";
 
-export * from "./user/validation.js";
+export * from "./user/validation";
 
 export type AuthSchema = z.infer<typeof authSchema.input>;
 export type CandleQuery = z.infer<typeof candlesSchema.getAllInput>;
