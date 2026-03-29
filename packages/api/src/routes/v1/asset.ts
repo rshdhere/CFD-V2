@@ -1,6 +1,6 @@
 import { getPriceHash } from "@CFD-V2/services/redis";
 import { assetSchema } from "@CFD-V2/validators/asset";
-import { privateProcedure, router } from "@/src/trpc.js";
+import { privateProcedure, router } from "../../trpc.js";
 
 const listedAssets = [
   {
