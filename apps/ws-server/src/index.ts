@@ -25,9 +25,11 @@ function toRedisPriceChannel(raw: string): string | null {
 
 export async function main() {
   const subscriber = createClient({ url: redisUrl });
-  subscriber.on("error", (err) => console.error("Redis subscriber error", err));
+  subscriber.on("error", (err) =>
+    console.error("[redis]: subscriber error", err),
+  );
   await subscriber.connect();
-  console.log("[redis]: connected to redis successfully");
+  console.log("[redis]: connected to redis");
 
   const wss = new WebSocketServer({ port: Number(WS_PORT) });
 
