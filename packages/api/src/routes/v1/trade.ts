@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { and, db, eq, sql } from "@CFD-V2/drizzle";
 import { calculatePnl } from "@CFD-V2/services/trading";
-import { privateProcedure, router } from "@/src/trpc.js";
+import { privateProcedure, router } from "../../trpc.js";
 import { fetchBinanceBookTicker } from "@CFD-V2/services/market";
 import {
   closedOrdersTable,
