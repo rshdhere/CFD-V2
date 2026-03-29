@@ -1,7 +1,29 @@
 {
   "$schema": "https://turborepo.dev/schema.json",
   "ui": "tui",
-  "globalEnv": ["DATABASE_URL"],
+  "globalEnv": [
+    "ACCESS_TOKEN_EXPIRY",
+    "CLIENT_PORT",
+    "CLICKHOUSE_DATABASE",
+    "CLICKHOUSE_PASSWORD",
+    "CLICKHOUSE_URL",
+    "CLICKHOUSE_USERNAME",
+    "CLIENT_URL",
+    "DATABASE_URL",
+    "EMAIL_JWT_EXPIRATION_TIME",
+    "ENVIRONMENT",
+    "JWT_ALGORITHM",
+    "JWT_SECRET",
+    "PRICE_SNAPSHOT_TTL_SEC",
+    "REDIS_URL",
+    "REFRESH_TOKEN_SECRET",
+    "REFRESH_TOKEN_LIFETIME_DAYS",
+    "RESEND_API_KEY",
+    "SERVER_PORT",
+    "SERVER_URL",
+    "VERIFICATION_EMAIL_FROM",
+    "WS_PORT"
+  ],
   "tasks": {
     "build": {
       "dependsOn": ["^build"],
