@@ -2,7 +2,150 @@
 
 @custom-variant dark (&:where(.dark, .dark *));
 
+:root {
+  --background: #f4f7fb;
+  --foreground: #0f172a;
+
+  --cfd-page-bg: var(--background);
+  --cfd-surface: #ffffff;
+  --cfd-surface-subtle: #f8fafd;
+  --cfd-border: #dbe4ef;
+  --cfd-text: var(--foreground);
+  --cfd-text-muted: #4b5565;
+  --cfd-accent: #2563eb;
+  --cfd-accent-soft: #dbeafe;
+  --cfd-ring: #60a5fa;
+  --cfd-positive: #16a34a;
+  --cfd-negative: #dc2626;
+  --cfd-buy: #059669;
+  --cfd-buy-soft: #d1fae5;
+  --cfd-sell: #dc2626;
+  --cfd-sell-soft: #fee2e2;
+}
+
 .dark {
-  --background: #171717;
-  --foreground: #ffffff;
+  --background: #0d1117;
+  --foreground: #f8fafc;
+
+  --cfd-page-bg: var(--background);
+  --cfd-surface: #121821;
+  --cfd-surface-subtle: #18212e;
+  --cfd-border: #253244;
+  --cfd-text: var(--foreground);
+  --cfd-text-muted: #9fb0c6;
+  --cfd-accent: #60a5fa;
+  --cfd-accent-soft: #1f324b;
+  --cfd-ring: #60a5fa;
+  --cfd-positive: #4ade80;
+  --cfd-negative: #f87171;
+  --cfd-buy: #34d399;
+  --cfd-buy-soft: #123b31;
+  --cfd-sell: #f87171;
+  --cfd-sell-soft: #4a1d1d;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
+
+.cfd-page {
+  background-color: var(--cfd-page-bg);
+  color: var(--cfd-text);
+}
+
+.cfd-surface {
+  background-color: var(--cfd-surface);
+  border-color: var(--cfd-border);
+}
+
+.cfd-surface-subtle {
+  background-color: var(--cfd-surface-subtle);
+  border-color: var(--cfd-border);
+}
+
+.cfd-border {
+  border-color: var(--cfd-border);
+}
+
+.cfd-muted {
+  color: var(--cfd-text-muted);
+}
+
+.cfd-positive-text {
+  color: var(--cfd-positive);
+}
+
+.cfd-negative-text {
+  color: var(--cfd-negative);
+}
+
+.cfd-buy-text {
+  color: var(--cfd-buy);
+}
+
+.cfd-ring {
+  --tw-ring-color: var(--cfd-ring);
+  --tw-ring-offset-color: var(--cfd-surface);
+}
+
+.cfd-control {
+  background-color: var(--cfd-surface-subtle);
+  border-color: var(--cfd-border);
+  color: var(--cfd-text);
+}
+
+.cfd-control[data-active="true"] {
+  background-color: var(--cfd-accent-soft);
+  border-color: var(--cfd-accent);
+  color: var(--cfd-accent);
+}
+
+.cfd-control[data-tone="buy"][data-active="true"] {
+  background-color: var(--cfd-buy-soft);
+  border-color: var(--cfd-buy);
+  color: var(--cfd-buy);
+}
+
+.cfd-control[data-tone="sell"][data-active="true"] {
+  background-color: var(--cfd-sell-soft);
+  border-color: var(--cfd-sell);
+  color: var(--cfd-sell);
+}
+
+.cfd-input {
+  background-color: var(--cfd-surface-subtle);
+  border-color: var(--cfd-border);
+  color: var(--cfd-text);
+}
+
+.cfd-input::placeholder {
+  color: var(--cfd-text-muted);
+}
+
+.cfd-input:focus-visible {
+  outline: 2px solid var(--cfd-ring);
+  outline-offset: 1px;
+}
+
+.cfd-primary-button {
+  color: var(--cfd-surface);
+}
+
+.cfd-primary-button[data-tone="buy"] {
+  background-color: var(--cfd-buy);
+}
+
+.cfd-primary-button[data-tone="sell"] {
+  background-color: var(--cfd-sell);
+}
+
+.cfd-secondary-button {
+  background-color: var(--cfd-surface-subtle);
+  border: 1px solid var(--cfd-border);
+  color: var(--cfd-text);
+}
+
+.cfd-secondary-button:hover {
+  background-color: var(--cfd-accent-soft);
 }

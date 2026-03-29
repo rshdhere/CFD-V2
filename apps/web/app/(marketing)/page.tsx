@@ -43,18 +43,22 @@ export default function Home() {
       <ModelTheme />
       <div className="flex gap-4">
         {isAuthenticated ? (
-          <button
-            type="button"
-            onClick={handleLogout}
-            disabled={isLoggingOut}
-            className="inline-flex cursor-pointer items-center underline disabled:cursor-not-allowed"
-          >
-            Logout
-          </button>
+          <>
+            <Link href="/trading">Trading</Link>
+            <button
+              type="button"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+              className="inline-flex cursor-pointer items-center underline disabled:cursor-not-allowed"
+            >
+              Logout
+            </button>
+          </>
         ) : (
           <>
             <Link href="/signup">Get Started</Link>
             <Link href="/login">Login</Link>
+            <Link href="/trading">Trading</Link>
           </>
         )}
       </div>

@@ -77,7 +77,7 @@ export default function SignUp() {
           <span className="font-medium">{verificationEmail}</span>.
         </p>
         <p className="text-sm text-neutral-700 dark:text-neutral-300">
-          Didn't receive the magic link yet?
+          Did not receive the magic link yet?
         </p>
         <button
           type="button"

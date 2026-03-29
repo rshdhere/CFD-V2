@@ -30,8 +30,9 @@ export default function RootLayout({
             defaultTheme="system"
             enableSystem
             disableTransitionOnChange
-          />
-          <main>{children}</main>
+          >
+            <main>{children}</main>
+          </ThemesProvider>
         </TRPCReactProvider>
       </body>
     </html>

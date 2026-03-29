@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "db:seed": "bun run src/seed.ts",
-    "dev": "bun --watch src/bin.ts"
+    "dev": "bun --watch src/bin.ts",
+    "start": "bun src/bin.ts"
   },
   "dependencies": {
     "@CFD-V2/config": "workspace:*",
