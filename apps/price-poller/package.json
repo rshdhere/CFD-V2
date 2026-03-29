@@ -4,12 +4,13 @@
   "type": "module",
   "private": true,
   "scripts": {
+    "db:seed": "bun run src/seed.ts",
     "dev": "bun --watch src/bin.ts"
   },
   "dependencies": {
     "@CFD-V2/config": "workspace:*",
-    "@CFD-V2/drizzle": "workspace:*",
     "@CFD-V2/validators": "workspace:*",
+    "@clickhouse/client": "^1.11.0",
     "dotenv": "^17.3.1",
     "redis": "^5.10.1"
   },
