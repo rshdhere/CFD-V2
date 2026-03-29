@@ -5,7 +5,8 @@
   "private": true,
   "exports": {
     ".": "./src/index.ts",
-    "./email": "./src/email/verification.ts"
+    "./email": "./src/email/verification.ts",
+    "./trpc": "./src/router.ts"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.10",
