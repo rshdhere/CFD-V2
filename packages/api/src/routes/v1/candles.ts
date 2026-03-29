@@ -1,7 +1,7 @@
 import { TRPCError } from "@trpc/server";
 import { fetchBinanceKlines } from "@CFD-V2/services/market";
 import { candlesSchema } from "@CFD-V2/validators/candles";
-import { privateProcedure, router } from "@/src/trpc.js";
+import { privateProcedure, router } from "../../trpc.js";
 
 export const candleRouter = router({
   getAll: privateProcedure
