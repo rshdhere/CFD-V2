@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { Check } from "lucide-react";
 import {
   formatVerificationResendCountdown,
   useVerificationResendCooldown,
 } from "@/hooks/use-verification-resend-cooldown";
+import { useAuth } from "@/providers/auth-provider";
 import { useTRPC } from "@/utils/trpc";
 import { useForm } from "react-hook-form";
 import { useMutation } from "@tanstack/react-query";
@@ -14,6 +16,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { authSchema, type SignUpSchema } from "@CFD-V2/validators";
 
 export default function SignUp() {
+  const router = useRouter();
+  const { setAuthToken } = useAuth();
   const trpc = useTRPC();
   const [verificationEmail, setVerificationEmail] = useState<string | null>(
     null,
@@ -37,11 +41,23 @@ export default function SignUp() {
 
   const onSubmit = (data: SignUpSchema) => {
     signupMutation.mutate(data, {
-      onSuccess: () => {
+      onSuccess: (response) => {
+        setAuthToken(response.accessToken);
         reset();
-        setVerificationEmail(data.email);
+        setVerificationEmail(null);
         setIsResendConsumed(false);
         resendVerificationMutation.reset();
+        router.replace("/");
+      },
+      onError: (error) => {
+        if (error.message.includes("email is not verified")) {
+          setVerificationEmail(data.email);
+          setIsResendConsumed(false);
+          resendVerificationMutation.reset();
+          return;
+        }
+
+        setVerificationEmail(null);
       },
     });
   };
@@ -113,8 +129,8 @@ export default function SignUp() {
         <p className="text-sm text-neutral-600 dark:text-neutral-400">
           You can close this page after verifying your email.
         </p>
-        <Link href="/signin" className="text-sm text-emerald-500 underline">
-          Go to sign in
+        <Link href="/login" className="text-sm text-emerald-500 underline">
+          Go to login
         </Link>
       </div>
     );
@@ -150,7 +166,7 @@ export default function SignUp() {
         type="submit"
         className="cursor-pointer rounded bg-emerald-400 py-2 text-neutral-900 disabled:bg-gray-300"
       >
-        Submit
+        Login
       </button>
       {signupMutation.error && (
         <p className="text-red-500">{signupMutation.error.message}</p>

@@ -127,7 +127,7 @@ export function OpenPositionsTable({
                       <button
                         type="button"
                         disabled={isClosing}
-                        className="cfd-secondary-button rounded-md px-3 py-1.5 text-xs font-medium disabled:opacity-70"
+                        className="cfd-secondary-button cursor-pointer rounded-md px-3 py-1.5 text-xs font-medium disabled:cursor-not-allowed disabled:opacity-70"
                         onClick={() => {
                           void onClosePosition(position.orderId);
                         }}

@@ -11,6 +11,12 @@ import {
 } from "@/lib/trading-types";
 import { cn } from "@/lib/utils";
 
+const TIMEFRAME_TITLES: Record<TradingTimeframe, string> = {
+  "1m": "1 Minute",
+  "1d": "1 Day",
+  "1w": "1 Week",
+};
+
 type AssetSelectorProps = {
   assets: AssetQuote[];
   selectedAsset: TradingAsset;
@@ -68,7 +74,8 @@ export function AssetSelector({
             <button
               key={option}
               type="button"
-              className="cfd-control rounded-md px-2.5 py-1.5 text-xs font-medium transition"
+              title={TIMEFRAME_TITLES[option]}
+              className="cfd-control cursor-pointer rounded-md px-2.5 py-1.5 text-xs font-medium transition"
               data-active={timeframe === option}
               onClick={() => onTimeframeChange(option)}
             >
@@ -94,7 +101,7 @@ export function AssetSelector({
               key={asset.symbol}
               type="button"
               className={cn(
-                "cfd-control rounded-lg border p-3 text-left transition",
+                "cfd-control cursor-pointer rounded-lg border p-3 text-left transition",
                 "cfd-ring focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none",
               )}
               data-active={isActive}

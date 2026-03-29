@@ -141,7 +141,9 @@ export function TradeTicket({
         <button
           type="button"
           onClick={() => setDirection("buy")}
-          className={cn("cfd-control rounded-md px-3 py-2 text-sm font-medium")}
+          className={cn(
+            "cfd-control cursor-pointer rounded-md px-3 py-2 text-sm font-medium",
+          )}
           data-active={direction === "buy"}
           data-tone="buy"
         >
@@ -150,7 +152,9 @@ export function TradeTicket({
         <button
           type="button"
           onClick={() => setDirection("sell")}
-          className={cn("cfd-control rounded-md px-3 py-2 text-sm font-medium")}
+          className={cn(
+            "cfd-control cursor-pointer rounded-md px-3 py-2 text-sm font-medium",
+          )}
           data-active={direction === "sell"}
           data-tone="sell"
         >
@@ -231,7 +235,7 @@ export function TradeTicket({
         <button
           type="submit"
           disabled={isSubmitting}
-          className="cfd-primary-button w-full rounded-md px-3 py-2 text-sm font-semibold disabled:opacity-70"
+          className="cfd-primary-button w-full cursor-pointer rounded-md px-3 py-2 text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-70"
           data-tone={direction}
         >
           {isSubmitting

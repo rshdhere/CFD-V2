@@ -6,25 +6,13 @@ import { privateProcedure, publicProcedure, router } from "../../trpc.js";
 import { createSessionTokens } from "../../auth/session-tokens.js";
 import { sendVerificationEmail } from "@CFD-V2/services/email/send";
 import { ConsumeVerificationResendAttempt } from "@CFD-V2/services/email";
-import { resolveClientOrigin } from "../../http/client-origin.js";
 import { ensureInitialTradingBalance } from "../../users/initial-balance.js";
-
-function getRequestOriginHeader(originHeader: string | string[] | undefined) {
-  if (Array.isArray(originHeader)) {
-    return originHeader[0];
-  }
-
-  return originHeader;
-}
 
 export const userRouter = router({
   signup: publicProcedure
     .input(authSchema.input)
     .output(authSchema.signupOutput)
-    .mutation(async ({ input, ctx }) => {
-      const clientOrigin = resolveClientOrigin(
-        getRequestOriginHeader(ctx.res.req.headers.origin),
-      );
+    .mutation(async ({ input }) => {
       const users = await db
         .select()
         .from(usersTable)
@@ -47,11 +35,9 @@ export const userRouter = router({
 
         if (!existingUser.isEmailVerified) {
           ConsumeVerificationResendAttempt(input.email);
-          sendVerificationEmail(
-            existingUser.id,
-            input.email,
-            clientOrigin,
-          ).catch(console.error);
+          sendVerificationEmail(existingUser.id, input.email).catch(
+            console.error,
+          );
 
           return { message: "verification email sent for the old-user" };
         }
@@ -77,18 +63,13 @@ export const userRouter = router({
         });
       }
 
-      sendVerificationEmail(user.userId, input.email, clientOrigin).catch(
-        console.error,
-      );
+      sendVerificationEmail(user.userId, input.email).catch(console.error);
       return { message: "verification email sent for the new-user" };
     }),
   resendVerificationEmail: publicProcedure
     .input(authSchema.resendVerificationInput)
     .output(authSchema.signupOutput)
-    .mutation(async ({ input, ctx }) => {
-      const clientOrigin = resolveClientOrigin(
-        getRequestOriginHeader(ctx.res.req.headers.origin),
-      );
+    .mutation(async ({ input }) => {
       const [user] = await db
         .select({
           userId: usersTable.id,
@@ -103,7 +84,7 @@ export const userRouter = router({
       }
 
       ConsumeVerificationResendAttempt(input.email);
-      await sendVerificationEmail(user.userId, input.email, clientOrigin);
+      await sendVerificationEmail(user.userId, input.email);
       return { message: "verification email sent" };
     }),
   login: publicProcedure
